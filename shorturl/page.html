@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script>
+    function clickHandler() {
+        const urlInput = document.querySelector('#urlInput');
+        const url = urlInput.value;
+
+        fetch("http://shorturl/main.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ url }),
+        })
+            .then(response => {
+                console.log('Request successful:', response);
+            })
+            .catch(error => {
+                console.error('Request failed:', error);
+            });
+        dbOut();
+        return false;
+    }
+
+    function dbOut() {
+        fetch("http://shorturl/dbOut.php", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => {
+                const linksContainer = document.querySelector('#linksContainer');
+                linksContainer.innerHTML = "";
+
+                const latestLink = data[data.length - 1]; // Получаем последний элемент из массива
+
+                const a = document.createElement('a');
+                a.href = latestLink.url;
+                a.textContent = latestLink.short_url;
+                linksContainer.appendChild(a); // Добавляем последний элемент
+            })
+            .catch(error => {
+                console.error('Request failed:', error);
+            });
+    }
+</script>
+<body>
+<form>
+    <input id="urlInput" value="" type="text">
+    <input onclick="clickHandler();" type="button" value="Submit">
+    <div id="linksContainer" style="word-wrap: break-word;"></div>
+</form>
+</body>
+</html>

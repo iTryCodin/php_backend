@@ -1,0 +1,12 @@
+RewriteEngine on
+
+# это по вкусу конечно, скрываем ряд папок
+RedirectMatch 404 /\.git
+RedirectMatch 404 /composer\.
+RedirectMatch 404 /.bowerrc
+
+# Это что б реальньно созданные файлы не редиректились
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+# редиректим на него родного
+RewriteRule . index.php
